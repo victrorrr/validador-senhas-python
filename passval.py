@@ -1,17 +1,22 @@
-with open ('leaks.txt', 'r', encoding='utf-8') as arquivo:
-    wordlist = arquivo.read().splitlines()
+import sqlite3 
 
-#pede a senha do usuario
-while True:
-    user_password = input("Digite sua senha aqui! ")
+#  o bloco 'with' gerencia a abertura e fechamento automaticamente
+with sqlite3.connect('dados.db') as conexao:
+    cursor = conexao.cursor()
 
-    #verificaçao do tamanho da senha 
-    if len(user_password) < 8:
-        print("Senha muito curta!")
-    #verifica senhas fracas
-    elif user_password in wordlist:
-        print("Senha fraca detectada!")
-    else:
-        print("Senha cadastrada com sucesso!")
-        
-        break
+    #pede a senha do usuario
+    while True:
+        user_password = input("Digite sua senha aqui: ")
+        #vai no banco de dados verifica se a senha existe
+        cursor.execute("SELECT * FROM leaks WHERE senha = ?", (user_password,))
+        resultado = cursor.fetchone()
+
+        #verificaçao do tamanho da senha 
+        if len(user_password) < 8:
+            print("Senha muito curta!")
+        #verifica se a existe e retona none
+        elif resultado is not None:
+            print("Senha fraca detectada!")
+        else:
+            print("Senha cadastrada com sucesso!")
+            break
