@@ -13,4 +13,5 @@ while True:
         print("Senha fraca detectada!")
     else:
         print("Senha cadastrada com sucesso!")
+        
         break
